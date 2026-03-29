@@ -2,7 +2,6 @@
 ;
 ; Conway's Game of Life for the Exidy Sorcerer 
 ;
-;
 ; MIT License
 ;
 ; Copyright (c) 2026 Walter McGibbony
