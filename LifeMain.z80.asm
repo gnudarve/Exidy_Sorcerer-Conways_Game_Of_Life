@@ -88,7 +88,7 @@ mainLoop:
 
 mainLoop_cont1:
                 LD      IX, board1          ;Board 1 is the old board  
-                CALL    DoReflections       ;finishes wiht IX on second row
+                CALL    DoReflections       ;finishes with IX on second row
                 LD      HL, board2          ;Board 2 is the new board, point to second row
                 CALL    evolve              ;evolve into board 2
 
