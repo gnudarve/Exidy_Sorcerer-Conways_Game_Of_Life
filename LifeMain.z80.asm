@@ -328,6 +328,7 @@ CLEAR_SCREEN:
                 LD      (HL), ' '
                 LDIR
                 RET
+          
                 
 ; RandLFSR
 ;
