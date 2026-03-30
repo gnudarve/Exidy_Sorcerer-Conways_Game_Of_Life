@@ -89,7 +89,7 @@ mainLoop:
 mainLoop_cont1:
                 LD      IX, board1          ;Board 1 is the old board  
                 CALL    DoReflections       ;finishes with IX on second row
-                LD      HL, board2          ;Board 2 is the new board, point to second row
+                LD      HL, board2          ;Board 2 is the new board
                 CALL    evolve              ;evolve into board 2
 
                 ;Random restart processing, if gens < GENSBEFORERNDRESET no random
@@ -101,7 +101,7 @@ mainLoop_cont1:
                 CP      RNDRESETTHRESH
                 JP      C, initBoard
 mainLoop_cont1a:
-                LD      HL, board2          ;Print the board2
+                LD      HL, board2          ;Print board2
                 CALL    printBoard
 
                 CALL    MONITOR_QUICKCK     ;Check For Break Char
@@ -143,7 +143,7 @@ DoReflections:
                 POP     IY
                 LD      DE, WIDTH * (HEIGHT_WB - 1)   ; get us to bottom row
                 ADD     IY, DE
-; IX points to first row (bottom reflection)
+; IX points to top row (bottom reflection)
 ; IY points to bottom row (top reflection)
 
                 LD      B, WIDTH
@@ -282,13 +282,9 @@ birth:
 ;  HL=board
 ;
 printBoard:
-                LD      DE, WIDTH              ;This will sync up the pointer for dest board since 
-                ADD     HL, DE                 ;  IX got bumped up a line in DoReflections
+                LD      DE, WIDTH           ;start at line 2 dont want to print puffer
+                ADD     HL, DE
                 LD      DE, SCREEN_BASE + WIDTH ;Set screen origin skipping first row (reflection border)
-
-                LD      BC, WIDTH
-                ADD     HL, BC              ;Start at second row of board, skip reflection border
-
                 LD      B, HEIGHT           ;Board height without reflection borders
 printRow:
                 PUSH    BC                  ;Save height for later   

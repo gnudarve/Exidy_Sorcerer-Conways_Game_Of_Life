@@ -261,7 +261,7 @@ birth:
 ;   HL=board
 ;
 printBoard:
-                LD      DE, WIDTH
+                LD      DE, WIDTH           ;start at line 2 dont want to print puffer
                 ADD     HL, DE                     
                 LD      DE, SCREEN_BASE + WIDTH ;Set screen origin
                 LD      B, HEIGHT               ;Print the board
