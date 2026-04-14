@@ -167,6 +167,9 @@ ReflectionLoop:
 ; HL = dest board
 evolve:
                 CALL    DoReflections          ;Finishes with IX on second row
+
+; Special first row uses calcCell_Top,calcCell_Top_Left,calcCell_Top_Right
+; IY = bottom row
                 LD      DE, WIDTH              ;Sync up the dest pointer since 
                 ADD     HL, DE                 ;  IX got bumped up a line in DoReflections
                 LD      B,  HEIGHT             ;Height without upper and lower borders, we only do the interior
@@ -191,6 +194,10 @@ evolveCell:
                 POP     BC                     ;Retrieve height
                 DJNZ    evolveRow              ;Complete the board
 
+; Special last row uses calcCell_Bottom,calcCell_Bottom_Left,calcCell_Bottom_Right
+; IY = top row
+
+
                 ;Increment generation
                 LD      HL, (nGeneration)      
                 INC     HL
@@ -198,6 +205,106 @@ evolveCell:
 
                 RET
 
+
+; Board
+; R 2 3  IY
+; R x 5
+; R 7 8
+calcCell_Top_Left:
+                XOR     A
+                ADD     A, (IX - 1)                     ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH + 1 ))          ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 L  IY
+; 4 x L
+; 6 7 L
+calcCell_Top_Right:
+                XOR     A
+                ADD     A, (IX - (WIDTH + 1))           ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH + WIDTH - 1))   ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + 1)                     ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 3  IY
+; 4 x 5
+; 6 7 8  
+calcCell_Top:       
+                XOR     A
+                ADD     A, (IY - 1)             ;Pos 1
+                ADD     A, (IY + 0)             ;Pos 2
+                ADD     A, (IY + 1)             ;Pos 3
+                ADD     A, (IX - 1)             ;Pos 4
+                ADD     A, (IX + 1)             ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))   ;Pos 6
+                ADD     A, (IX +  WIDTH)        ;Pos 7
+                ADD     A, (IX + (WIDTH + 1))   ;Pos 8
+                JP      evalCell
+
+;-------------------------------------------------------------------------------
+
+; Board
+; R 2 3
+; R x 5
+; R 7 8  IY  
+calcCell_Bottom_Left:
+                XOR     A
+                ADD     A, (IX - 1)                     ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH + 1 ))          ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 L
+; 4 x L
+; 6 7 L  IY
+calcCell_Bottom_Right:
+                XOR     A
+                ADD     A, (IX - (WIDTH + 1))           ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH + WIDTH - 1))   ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + 1)                     ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 3
+; 4 x 5
+; 6 7 8  IY
+calcCell_Bottom:       
+                XOR     A
+                ADD     A, (IX - (WIDTH + 1))   ;Pos 1
+                ADD     A, (IX -  WIDTH)        ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))   ;Pos 3
+                ADD     A, (IX - 1)             ;Pos 4
+                ADD     A, (IX + 1)             ;Pos 5
+                ADD     A, (IY - 1)             ;Pos 6
+                ADD     A, (IY + 0)             ;Pos 7
+                ADD     A, (IY + 1)             ;Pos 8
+                JP      evalCell
+
+;-------------------------------------------------------------------------------
 
 ; Board
 ; R 2 3
