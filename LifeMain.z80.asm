@@ -128,9 +128,8 @@ exit_program:
 ;Evolve
 ; IX = src board
 ; HL = dest board
-evolve:
-                ;CALL    DoReflections          ;Finishes with IX on second row
 
+evolve:
 ;-------------------------------------------------------------------------------
 ; Special first row uses calcCell_Top,calcCell_Top_Left,calcCell_Top_Right
 
@@ -294,7 +293,7 @@ calcCell_Bottom_Right:
                 XOR     A
                 ADD     A, (IX - (WIDTH + 1))           ;Pos 1
                 ADD     A, (IX -  WIDTH)                ;Pos 2
-                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - (WIDTH + WIDTH - 1))   ;Pos 3
                 ADD     A, (IX - 1)                     ;Pos 4
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 5
                 ADD     A, (IY - 1)                     ;Pos 6
@@ -344,7 +343,7 @@ calcCell_Right:
                 XOR     A
                 ADD     A, (IX - (WIDTH + 1))           ;Pos 1
                 ADD     A, (IX -  WIDTH)                ;Pos 2
-                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - (WIDTH + WIDTH - 1))   ;Pos 3
                 ADD     A, (IX - 1)                     ;Pos 4
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 5
                 ADD     A, (IX + (WIDTH - 1))           ;Pos 6
@@ -363,7 +362,7 @@ calcCell:
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 3
                 ADD     A, (IX - 1)                     ;Pos 4
                 ADD     A, (IX + 1)                     ;Pos 5
-                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
                 ADD     A, (IX +  WIDTH)                ;Pos 7
                 ADD     A, (IX + (WIDTH + 1))           ;Pos 8
 
@@ -392,9 +391,9 @@ birth:
 ;  HL=board
 ;
 printBoard:
-                ;Set screen origin skipping first row, we have upper1 row  and lower margins
+                ;Set screen origin skipping first row, we have upper and lower margins
                 LD      DE, SCREEN_BASE + WIDTH 
-                LD      B, HEIGHT           ;Board height without reflection borders
+                LD      B, HEIGHT           ;Board height
 printRow:
                 PUSH    BC                  ;Save height for later   
                 LD      B, WIDTH
@@ -418,17 +417,6 @@ printCont:
                 DJNZ    printRow            ;Complete the board
 
                 RET
-
-printBlankRow:
-                LD      B, WIDTH
-                LD      A, ' '
-printBlankRowLoop:
-                LD      (DE), A
-                INC     DE                  ;Next screen addr
-                INC     HL                  ;Next cell
-                DJNZ    printBlankRowLoop
-                RET
-
 
 CLEAR_SCREEN:
                 LD      HL, SCREEN_BASE
