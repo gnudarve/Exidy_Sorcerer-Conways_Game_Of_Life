@@ -41,10 +41,9 @@ MONITOR_SENDBLANKS  .equ $E2D2
 
 SCREEN_BASE         .equ $F080
 
-HEIGHT_WB           .equ 30
-
-WIDTH               .equ 64             ;Horizontal wrapping is done with just add/subtract, no border
-HEIGHT              .equ HEIGHT_WB - 2  ;We have a top and bottom reflection border for wrapping the playing board
+;Exidy screen is 64x30 but I want a 1 row margin at top and bottom
+WIDTH               .equ 64             ; Horizontal wrapping is done with just add/subtract, no border
+HEIGHT              .equ 30 - 2         ; We have a top and bottom border
 
 GENSBEFORERNDRESET  .equ 1333   ;Num gens before we start random reset check, must be less than 65536
 RNDRESETTHRESH      .equ 1      ;Threshold for 0-255 random number to trigger reset
@@ -52,14 +51,14 @@ RNDRESETTHRESH      .equ 1      ;Threshold for 0-255 random number to trigger re
     .segment "CODE"
     .org $0000
 
-                PUSH    IY                  ;preserve IY for monitor integrity
+                PUSH    IY                  ;Preserve IY for Exidy Monitor integrity (9)it crashes if we don't)
                 CALL    CLEAR_SCREEN
 
 initBoard:
-                LD      HL, board1 + WIDTH
+                LD      HL, board1
                 LD      B, HEIGHT
 initBoardRow:
-                PUSH    BC                  ;Save height for later
+                PUSH    BC                  ; Save height for later
                 LD      B, WIDTH
 initBoardCell:
                 CALL    RandLFSR
@@ -68,29 +67,29 @@ initBoardCell:
                 JP      NC, cellDead
                 LD      (HL), 1             ; cell alive
 cellDead:       INC     HL
-                DJNZ    initBoardCell       ;Complete the row
-                POP     BC                  ;Retrieve row counter
-                DJNZ    initBoardRow        ;Complete the board
+                DJNZ    initBoardCell       ; Complete the row
+                POP     BC                  ; Retrieve row counter
+                DJNZ    initBoardRow        ; Complete the board
 
-                LD      HL, 0               ;Clear Generation counter
+                LD      HL, 0               ; Clear Generation counter
                 LD      (nGeneration), HL
 
 
 mainLoop:
-                LD      HL, board1          ;Print board1
+                LD      HL, board1          ; Print board1
                 CALL    printBoard
 
-                CALL    MONITOR_QUICKCK     ;Check For Break Char
-				JR		Z, mainLoop_cont1   ; no key
-                CP      $1B                 ; RUN/STOP?
+                CALL    MONITOR_QUICKCK     ; Check For Break Char
+				JR		Z, mainLoop_cont1   ;  no key
+                CP      $1B                 ;  RUN/STOP?
                 JR      Z, initBoard
                 CP      $03                 ; CTRL-C?
                 JR      Z, exit_program                   
 
 mainLoop_cont1:
-                LD      IX, board1          ;Board 1 is the old board  
-                LD      HL, board2          ;Board 2 is the new board
-                CALL    evolve              ;evolve into board 2
+                LD      IX, board1          ; Board 1 is the old board  
+                LD      HL, board2          ; Board 2 is the new board
+                CALL    evolve              ; evolve into board 2
 
                 ;Random restart processing, if gens < GENSBEFORERNDRESET no random
                 LD      DE, GENSBEFORERNDRESET  ;HL has current gen after evolve
@@ -104,17 +103,17 @@ mainLoop_cont1a:
                 LD      HL, board2          ;Print board2
                 CALL    printBoard
 
-                CALL    MONITOR_QUICKCK     ;Check For Break Char
-				JR		Z, mainLoop_cont2   ; no key
-                CP      $1B                 ; RUN/STOP?
+                CALL    MONITOR_QUICKCK     ; Check For Break Char
+				JR		Z, mainLoop_cont2   ;  no key
+                CP      $1B                 ;  RUN/STOP?
                 JR      Z, initBoard
-                CP      $03                 ; CTRL-C?
+                CP      $03                 ;  CTRL-C?
                 JR      Z, exit_program
 
 mainLoop_cont2:
-                LD      IX, board2          ;Board 2 is the old board
-                LD      HL, board1          ;Board 1 is the new board, point to second row
-                CALL    evolve              ;evolve into board 1
+                LD      IX, board2          ; Board 2 is the old board
+                LD      HL, board1          ; Board 1 is the new board, point to second row
+                CALL    evolve              ; evolve into board 1
 
                 ;Random restart processing, if gens < GENSBEFORERNDRESET no random
                 LD      DE, GENSBEFORERNDRESET  ;HL has current gen after evolve
@@ -136,42 +135,49 @@ exit_program:
 ;***** Routines *****
 
 
-DoReflections:
-; IX = Source board
-                PUSH    IX
-                POP     IY
-                LD      DE, WIDTH * (HEIGHT_WB - 1)   ; get us to bottom row
-                ADD     IY, DE
-; IX points to top row (bottom reflection)
-; IY points to bottom row (top reflection)
-                LD      B, WIDTH
-ReflectionLoop:
-                ;       copy (bottom row - 1) byte to top row byte
-                LD      A, (IY - WIDTH)
-                LD      (IX + 0), A
-
-                ;       copy (top row + 1) byte to bottom row byte
-                LD      A, (IX + WIDTH)
-                LD      (IY + 0), A
-
-                INC     IX
-                INC     IY
-                DJNZ    ReflectionLoop
-
-; IX shoud now point to second row
-                RET
-
 
 ;Evolve
 ; IX = src board
 ; HL = dest board
 evolve:
-                CALL    DoReflections          ;Finishes with IX on second row
-                LD      DE, WIDTH              ;Sync up the dest pointer since 
-                ADD     HL, DE                 ;  IX got bumped up a line in DoReflections
-                LD      B,  HEIGHT             ;Height without upper and lower borders, we only do the interior
+                ;CALL    DoReflections          ;Finishes with IX on second row
+
+;-------------------------------------------------------------------------------
+; Special first row uses calcCell_Top,calcCell_Top_Left,calcCell_Top_Right
+
+                ; Store a copy of first row location to be used later when we eval the bottom row
+                PUSH    IX 
+
+                ; Let IY = bottom row
+                PUSH    IX
+                POP     IY
+                LD      DE, WIDTH * (HEIGHT - 1)   ; get us to bottom row
+                ADD     IY, DE
+
+                CALL    calcCell_Top_Left      ;Calculate a left column cell (does l/r reflection)
+                INC     HL
+                INC     IX
+                INC     IY
+
+                LD      B, WIDTH - 2           ;Inner part only
+evolveCell_Top:
+                CALL    calcCell_Top           ;Calculate an inner cell
+                INC     HL
+                INC     IX
+                INC     IY
+                DJNZ    evolveCell_Top         ;Complete inner cells
+
+                CALL    calcCell_Top_Right     ;Calculate a right column cell (does r/l reflection)
+                INC     HL
+                INC     IX
+                ;INC     IY
+
+;-------------------------------------------------------------------------------
+; Normal rows
+
+                LD      B,  HEIGHT - 2         ; remove top and botom rows since we roll those out above and below
 evolveRow:
-                PUSH    BC                     ;Save height for later   
+                PUSH    BC                     ;Save current height for later   
 
                 CALL    calcCell_Left          ;Calculate a left column cell (does l/r reflection)
                 INC     HL
@@ -191,6 +197,32 @@ evolveCell:
                 POP     BC                     ;Retrieve height
                 DJNZ    evolveRow              ;Complete the board
 
+;-------------------------------------------------------------------------------
+; Special last row
+
+                ; Let IY = top row
+                POP     IY      ; we pushed that at the beginning of the routine
+
+                CALL    calcCell_Bottom_Left   ;Calculate a left column cell (does l/r reflection)
+                INC     HL
+                INC     IX
+                INC     IY
+
+                LD      B, WIDTH - 2           ;Inner part only
+evolveCell_Bottom:
+                CALL    calcCell_Bottom        ;Calculate an inner cell
+                INC     HL
+                INC     IX
+                INC     IY
+                DJNZ    evolveCell_Bottom      ;Complete inner cells
+
+                CALL    calcCell_Bottom_Right  ;Calculate a right column cell (does r/l reflection)
+
+                ;INC     HL
+                ;INC     IX
+                ;INC     IY
+
+
                 ;Increment generation
                 LD      HL, (nGeneration)      
                 INC     HL
@@ -198,6 +230,106 @@ evolveCell:
 
                 RET
 
+
+; Board
+; R 2 3  IY
+; R x 5
+; R 7 8
+calcCell_Top_Left:
+                XOR     A
+                ADD     A, (IY + (WIDTH - 1))           ;Pos 1
+                ADD     A, (IY + 0)                     ;Pos 2
+                ADD     A, (IY + 1)                     ;Pos 3
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH + 1 ))          ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 L  IY
+; 4 x L
+; 6 7 L
+calcCell_Top_Right:
+                XOR     A
+                ADD     A, (IY - 1)                     ;Pos 1
+                ADD     A, (IY + 0)                     ;Pos 2
+                ADD     A, (IY - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + 1)                     ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 3  IY
+; 4 x 5
+; 6 7 8  
+calcCell_Top:       
+                XOR     A
+                ADD     A, (IY - 1)                     ;Pos 1
+                ADD     A, (IY + 0)                     ;Pos 2
+                ADD     A, (IY + 1)                     ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH + 1))           ;Pos 8
+                JP      evalCell
+
+;-------------------------------------------------------------------------------
+
+; Board
+; R 2 3
+; R x 5
+; R 7 8  IY  
+calcCell_Bottom_Left:
+                XOR     A
+                ADD     A, (IX - 1)                     ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IY + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IY + 0)                     ;Pos 7
+                ADD     A, (IY + 1)                     ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 L
+; 4 x L
+; 6 7 L  IY
+calcCell_Bottom_Right:
+                XOR     A
+                ADD     A, (IX - (WIDTH + 1))           ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 5
+                ADD     A, (IY - 1)                     ;Pos 6
+                ADD     A, (IY + 0)                     ;Pos 7
+                ADD     A, (IY - (WIDTH - 1))           ;Pos 8
+                JP      evalCell
+
+; Board
+; 1 2 3
+; 4 x 5
+; 6 7 8  IY
+calcCell_Bottom:       
+                XOR     A
+                ADD     A, (IX - (WIDTH + 1))           ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IY - 1)                     ;Pos 6
+                ADD     A, (IY + 0)                     ;Pos 7
+                ADD     A, (IY + 1)                     ;Pos 8
+                JP      evalCell
+
+;-------------------------------------------------------------------------------
 
 ; Board
 ; R 2 3
@@ -210,8 +342,8 @@ calcCell_Left:
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 3
                 ADD     A, (IX + (WIDTH - 1))           ;Pos 4
                 ADD     A, (IX + 1)                     ;Pos 5
-                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
-                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX + WIDTH)                 ;Pos 7
                 ADD     A, (IX + (WIDTH + 1 ))          ;Pos 8
                 JP      evalCell
 
@@ -223,7 +355,7 @@ calcCell_Right:
                 XOR     A
                 ADD     A, (IX - (WIDTH + 1))           ;Pos 1
                 ADD     A, (IX -  WIDTH)                ;Pos 2
-                ADD     A, (IX - (WIDTH + WIDTH - 1))   ;Pos 3
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
                 ADD     A, (IX - 1)                     ;Pos 4
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 5
                 ADD     A, (IX + (WIDTH - 1))           ;Pos 6
@@ -237,28 +369,28 @@ calcCell_Right:
 ; 6 7 8
 calcCell:       
                 XOR     A
-                ADD     A, (IX - (WIDTH + 1))   ;Pos 1
-                ADD     A, (IX -  WIDTH)        ;Pos 2
-                ADD     A, (IX - (WIDTH - 1))   ;Pos 3
-                ADD     A, (IX - 1)             ;Pos 4
-                ADD     A, (IX + 1)             ;Pos 5
-                ADD     A, (IX + (WIDTH - 1))   ;Pos 6
-                ADD     A, (IX +  WIDTH)        ;Pos 7
-                ADD     A, (IX + (WIDTH + 1))   ;Pos 8
+                ADD     A, (IX - (WIDTH + 1))           ;Pos 1
+                ADD     A, (IX -  WIDTH)                ;Pos 2
+                ADD     A, (IX - (WIDTH - 1))           ;Pos 3
+                ADD     A, (IX - 1)                     ;Pos 4
+                ADD     A, (IX + 1)                     ;Pos 5
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
+                ADD     A, (IX +  WIDTH)                ;Pos 7
+                ADD     A, (IX + (WIDTH + 1))           ;Pos 8
 
 
 evalCell:
                 CP      3                       
-                JR      Z, birth                ;Exactly 3, then birth
-                JR      NC, death               ;More than 3, death by overpopulation
+                JR      Z, birth                ; Exactly 3, then birth
+                JR      NC, death               ; More than 3, death by overpopulation
                 CP      2
-                JR      Z, maintain             ;Copies from the last generation
-                                                ;Anything else, (0 or 1) dies from loneliness
+                JR      Z, maintain             ; Copies from the last generation
+                                                ; Anything else, (0 or 1) dies from loneliness
 death:
                 LD      (HL), 0
                 RET
 maintain:
-                LD      A, (IX + 0)             ;Self
+                LD      A, (IX + 0)             ; Self
                 LD      (HL), A
                 RET
 birth:
@@ -271,9 +403,8 @@ birth:
 ;  HL=board
 ;
 printBoard:
-                LD      DE, WIDTH           ;start at line 2 dont want to print puffer
-                ADD     HL, DE
-                LD      DE, SCREEN_BASE + WIDTH ;Set screen origin skipping first row (reflection border)
+                ;Set screen origin skipping first row, we have upper1 row  and lower margins
+                LD      DE, SCREEN_BASE + WIDTH 
                 LD      B, HEIGHT           ;Board height without reflection borders
 printRow:
                 PUSH    BC                  ;Save height for later   
@@ -375,7 +506,7 @@ RandLFSR:
 
 LFSRSeed:       .byte       $2B,$C3,$84,$C2,$8D,$5D,$B1,$85
 nGeneration     .word       0
-board1:         .storage    WIDTH * HEIGHT_WB
-board2:         .storage    WIDTH * HEIGHT_WB
+board1:         .storage    WIDTH * HEIGHT
+board2:         .storage    WIDTH * HEIGHT
 
 .end
