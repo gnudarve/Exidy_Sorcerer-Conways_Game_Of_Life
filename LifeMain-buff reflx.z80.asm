@@ -29,6 +29,7 @@
     .format  "PRG"
     .setting "OutputSaveIndividualSegments", false
 
+; Buffered reflections on top and bottom
 
 HEIGHT_WB           .equ 30
 
