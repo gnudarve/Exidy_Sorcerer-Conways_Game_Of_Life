@@ -362,7 +362,7 @@ calcCell:
                 ADD     A, (IX - (WIDTH - 1))           ;Pos 3
                 ADD     A, (IX - 1)                     ;Pos 4
                 ADD     A, (IX + 1)                     ;Pos 5
-                ADD     A, (IX + (WIDTH + WIDTH - 1))   ;Pos 6
+                ADD     A, (IX + (WIDTH - 1))           ;Pos 6
                 ADD     A, (IX +  WIDTH)                ;Pos 7
                 ADD     A, (IX + (WIDTH + 1))           ;Pos 8
 

@@ -189,7 +189,7 @@ $01cd dd 86 c0      add a,(ix+$c0)
 $01d0 dd 86 c1      add a,(ix+$c1)
 $01d3 dd 86 ff      add a,(ix+$ff)
 $01d6 dd 86 01      add a,(ix+$01)
-$01d9 dd 86 7f      add a,(ix+$7f)
+$01d9 dd 86 3f      add a,(ix+$3f)
 $01dc dd 86 40      add a,(ix+$40)
 $01df dd 86 41      add a,(ix+$41)
 $01e2 fe 03         cp $03
