@@ -1,281 +1,364 @@
-$0000 fd e5         push iy
-$0002 cd 1d 02      call $021d
-$0005 21 76 02      ld hl,$0276
-$0008 06 1c         ld b,$1c
-$000a c5            push bc
-$000b 06 40         ld b,$40
-$000d cd 2b 02      call $022b
-$0010 fe 40         cp $40
-$0012 36 00         ld (hl),$00
-$0014 d2 19 00      jp nc,$0019
-$0017 36 01         ld (hl),$01
+$0000 21 04 03      ld hl,$0304
+$0003 cd 81 02      call $0281
+$0006 06 1c         ld b,$1c
+$0008 c5            push bc
+$0009 36 00         ld (hl),$00
+$000b 23            inc hl
+$000c 06 3e         ld b,$3e
+$000e cd a5 02      call $02a5
+$0011 fe 40         cp $40
+$0013 36 00         ld (hl),$00
+$0015 d2 19 00      jp nc,$0019
+$0018 34            inc (hl)
 $0019 23            inc hl
-$001a 10 f1         djnz $000d
-$001c c1            pop bc
-$001d 10 eb         djnz $000a
-$001f 21 00 00      ld hl,$0000
-$0022 22 74 02      ld ($0274),hl
-$0025 21 76 02      ld hl,$0276
-$0028 cd f7 01      call $01f7
-$002b cd 15 e0      call $e015
-$002e 28 08         jr z,$0038
-$0030 fe 1b         cp $1b
-$0032 28 d1         jr z,$0005
-$0034 fe 03         cp $03
-$0036 28 4c         jr z,$0084
-$0038 dd 21 76 02   ld ix,$0276
-$003c 21 76 09      ld hl,$0976
-$003f cd 87 00      call $0087
-$0042 11 35 05      ld de,$0535
-$0045 b7            or a
-$0046 ed 52         sbc hl,de
-$0048 da 53 00      jp c,$0053
-$004b cd 2b 02      call $022b
-$004e fe 01         cp $01
-$0050 da 05 00      jp c,$0005
-$0053 21 76 09      ld hl,$0976
-$0056 cd f7 01      call $01f7
-$0059 cd 15 e0      call $e015
-$005c 28 08         jr z,$0066
-$005e fe 1b         cp $1b
-$0060 28 a3         jr z,$0005
-$0062 fe 03         cp $03
-$0064 28 1e         jr z,$0084
-$0066 dd 21 76 09   ld ix,$0976
-$006a 21 76 02      ld hl,$0276
-$006d cd 87 00      call $0087
-$0070 11 35 05      ld de,$0535
-$0073 b7            or a
-$0074 ed 52         sbc hl,de
-$0076 da 81 00      jp c,$0081
-$0079 cd 2b 02      call $022b
-$007c fe 01         cp $01
-$007e da 05 00      jp c,$0005
-$0081 c3 25 00      jp $0025
-$0084 fd e1         pop iy
-$0086 c9            ret
-$0087 dd e5         push ix
-$0089 dd e5         push ix
-$008b fd e1         pop iy
-$008d 11 c0 06      ld de,$06c0
-$0090 fd 19         add iy,de
-$0092 cd e9 00      call $00e9
-$0095 23            inc hl
-$0096 dd 23         inc ix
-$0098 fd 23         inc iy
-$009a 06 3e         ld b,$3e
-$009c cd 21 01      call $0121
-$009f 23            inc hl
-$00a0 dd 23         inc ix
-$00a2 fd 23         inc iy
-$00a4 10 f6         djnz $009c
-$00a6 cd 05 01      call $0105
-$00a9 23            inc hl
-$00aa dd 23         inc ix
-$00ac 06 1a         ld b,$1a
-$00ae c5            push bc
-$00af cd 91 01      call $0191
-$00b2 23            inc hl
-$00b3 dd 23         inc ix
-$00b5 06 3e         ld b,$3e
-$00b7 cd c9 01      call $01c9
-$00ba 23            inc hl
-$00bb dd 23         inc ix
-$00bd 10 f8         djnz $00b7
-$00bf cd ad 01      call $01ad
-$00c2 23            inc hl
-$00c3 dd 23         inc ix
-$00c5 c1            pop bc
-$00c6 10 e6         djnz $00ae
-$00c8 fd e1         pop iy
-$00ca cd 3d 01      call $013d
-$00cd 23            inc hl
-$00ce dd 23         inc ix
-$00d0 fd 23         inc iy
-$00d2 06 3e         ld b,$3e
-$00d4 cd 75 01      call $0175
-$00d7 23            inc hl
-$00d8 dd 23         inc ix
-$00da fd 23         inc iy
-$00dc 10 f6         djnz $00d4
-$00de cd 59 01      call $0159
-$00e1 2a 74 02      ld hl,($0274)
-$00e4 23            inc hl
-$00e5 22 74 02      ld ($0274),hl
-$00e8 c9            ret
-$00e9 af            xor a
-$00ea fd 86 3f      add a,(iy+$3f)
-$00ed fd 86 00      add a,(iy+$00)
-$00f0 fd 86 01      add a,(iy+$01)
-$00f3 dd 86 3f      add a,(ix+$3f)
-$00f6 dd 86 01      add a,(ix+$01)
-$00f9 dd 86 7f      add a,(ix+$7f)
-$00fc dd 86 40      add a,(ix+$40)
-$00ff dd 86 41      add a,(ix+$41)
-$0102 c3 e2 01      jp $01e2
-$0105 af            xor a
-$0106 fd 86 ff      add a,(iy+$ff)
-$0109 fd 86 00      add a,(iy+$00)
-$010c fd 86 c1      add a,(iy+$c1)
-$010f dd 86 ff      add a,(ix+$ff)
-$0112 dd 86 c1      add a,(ix+$c1)
-$0115 dd 86 3f      add a,(ix+$3f)
-$0118 dd 86 40      add a,(ix+$40)
-$011b dd 86 01      add a,(ix+$01)
-$011e c3 e2 01      jp $01e2
-$0121 af            xor a
-$0122 fd 86 ff      add a,(iy+$ff)
-$0125 fd 86 00      add a,(iy+$00)
-$0128 fd 86 01      add a,(iy+$01)
-$012b dd 86 ff      add a,(ix+$ff)
-$012e dd 86 01      add a,(ix+$01)
-$0131 dd 86 3f      add a,(ix+$3f)
-$0134 dd 86 40      add a,(ix+$40)
-$0137 dd 86 41      add a,(ix+$41)
-$013a c3 e2 01      jp $01e2
-$013d af            xor a
-$013e dd 86 ff      add a,(ix+$ff)
-$0141 dd 86 c0      add a,(ix+$c0)
-$0144 dd 86 c1      add a,(ix+$c1)
-$0147 dd 86 3f      add a,(ix+$3f)
-$014a dd 86 01      add a,(ix+$01)
-$014d fd 86 3f      add a,(iy+$3f)
-$0150 fd 86 00      add a,(iy+$00)
-$0153 fd 86 01      add a,(iy+$01)
-$0156 c3 e2 01      jp $01e2
-$0159 af            xor a
-$015a dd 86 bf      add a,(ix+$bf)
-$015d dd 86 c0      add a,(ix+$c0)
-$0160 dd 86 c1      add a,(ix+$c1)
-$0163 dd 86 ff      add a,(ix+$ff)
-$0166 dd 86 c1      add a,(ix+$c1)
-$0169 fd 86 ff      add a,(iy+$ff)
-$016c fd 86 00      add a,(iy+$00)
-$016f fd 86 c1      add a,(iy+$c1)
-$0172 c3 e2 01      jp $01e2
-$0175 af            xor a
-$0176 dd 86 bf      add a,(ix+$bf)
-$0179 dd 86 c0      add a,(ix+$c0)
-$017c dd 86 c1      add a,(ix+$c1)
-$017f dd 86 ff      add a,(ix+$ff)
-$0182 dd 86 01      add a,(ix+$01)
-$0185 fd 86 ff      add a,(iy+$ff)
-$0188 fd 86 00      add a,(iy+$00)
-$018b fd 86 01      add a,(iy+$01)
-$018e c3 e2 01      jp $01e2
-$0191 af            xor a
-$0192 dd 86 ff      add a,(ix+$ff)
-$0195 dd 86 c0      add a,(ix+$c0)
-$0198 dd 86 c1      add a,(ix+$c1)
-$019b dd 86 3f      add a,(ix+$3f)
-$019e dd 86 01      add a,(ix+$01)
-$01a1 dd 86 3f      add a,(ix+$3f)
-$01a4 dd 86 40      add a,(ix+$40)
-$01a7 dd 86 41      add a,(ix+$41)
-$01aa c3 e2 01      jp $01e2
-$01ad af            xor a
-$01ae dd 86 bf      add a,(ix+$bf)
-$01b1 dd 86 c0      add a,(ix+$c0)
-$01b4 dd 86 c1      add a,(ix+$c1)
-$01b7 dd 86 ff      add a,(ix+$ff)
-$01ba dd 86 c1      add a,(ix+$c1)
-$01bd dd 86 3f      add a,(ix+$3f)
-$01c0 dd 86 40      add a,(ix+$40)
-$01c3 dd 86 01      add a,(ix+$01)
-$01c6 c3 e2 01      jp $01e2
-$01c9 af            xor a
-$01ca dd 86 bf      add a,(ix+$bf)
-$01cd dd 86 c0      add a,(ix+$c0)
-$01d0 dd 86 c1      add a,(ix+$c1)
-$01d3 dd 86 ff      add a,(ix+$ff)
-$01d6 dd 86 01      add a,(ix+$01)
-$01d9 dd 86 3f      add a,(ix+$3f)
-$01dc dd 86 40      add a,(ix+$40)
-$01df dd 86 41      add a,(ix+$41)
-$01e2 fe 03         cp $03
-$01e4 28 0e         jr z,$01f4
-$01e6 30 04         jr nc,$01ec
-$01e8 fe 02         cp $02
-$01ea 28 03         jr z,$01ef
-$01ec 36 00         ld (hl),$00
-$01ee c9            ret
-$01ef dd 7e 00      ld a,(ix+$00)
-$01f2 77            ld (hl),a
-$01f3 c9            ret
-$01f4 36 01         ld (hl),$01
-$01f6 c9            ret
-$01f7 11 c0 f0      ld de,$f0c0
-$01fa 06 1c         ld b,$1c
-$01fc c5            push bc
-$01fd 06 40         ld b,$40
-$01ff 7e            ld a,(hl)
-$0200 a7            and a
-$0201 28 05         jr z,$0208
-$0203 3e 84         ld a,$84
-$0205 c3 0a 02      jp $020a
-$0208 3e 20         ld a,$20
-$020a 12            ld (de),a
-$020b 13            inc de
-$020c 23            inc hl
-$020d 10 f0         djnz $01ff
-$020f c1            pop bc
-$0210 10 ea         djnz $01fc
-$0212 c9            ret
-$0213 06 40         ld b,$40
-$0215 3e 20         ld a,$20
-$0217 12            ld (de),a
-$0218 13            inc de
-$0219 23            inc hl
-$021a 10 fb         djnz $0217
-$021c c9            ret
-$021d 21 80 f0      ld hl,$f080
-$0220 11 81 f0      ld de,$f081
-$0223 01 7f 07      ld bc,$077f
-$0226 36 20         ld (hl),$20
-$0228 ed b0         ldir
-$022a c9            ret
-$022b e5            push hl
-$022c c5            push bc
-$022d 21 70 02      ld hl,$0270
-$0230 5e            ld e,(hl)
-$0231 23            inc hl
-$0232 56            ld d,(hl)
-$0233 23            inc hl
-$0234 4e            ld c,(hl)
-$0235 23            inc hl
-$0236 7e            ld a,(hl)
-$0237 47            ld b,a
-$0238 cb 13         rl e
-$023a cb 12         rl d
-$023c cb 11         rl c
-$023e 17            rla
-$023f cb 13         rl e
-$0241 cb 12         rl d
-$0243 cb 11         rl c
-$0245 17            rla
-$0246 cb 13         rl e
-$0248 cb 12         rl d
-$024a cb 11         rl c
-$024c 17            rla
-$024d 67            ld h,a
-$024e cb 13         rl e
-$0250 cb 12         rl d
-$0252 cb 11         rl c
-$0254 17            rla
-$0255 a8            xor b
-$0256 cb 13         rl e
-$0258 cb 12         rl d
-$025a ac            xor h
-$025b a9            xor c
-$025c aa            xor d
-$025d 21 72 02      ld hl,$0272
-$0260 11 73 02      ld de,$0273
-$0263 01 07 00      ld bc,$0007
-$0266 ed b8         lddr
-$0268 12            ld (de),a
-$0269 c1            pop bc
-$026a e1            pop hl
-$026b c9            ret
+$001a 10 f2         djnz $000e
+$001c 36 00         ld (hl),$00
+$001e 23            inc hl
+$001f c1            pop bc
+$0020 10 e6         djnz $0008
+$0022 cd 81 02      call $0281
+$0025 21 84 0a      ld hl,$0a84
+$0028 cd 81 02      call $0281
+$002b 06 1c         ld b,$1c
+$002d c5            push bc
+$002e 36 00         ld (hl),$00
+$0030 23            inc hl
+$0031 06 3e         ld b,$3e
+$0033 36 00         ld (hl),$00
+$0035 23            inc hl
+$0036 10 fb         djnz $0033
+$0038 36 00         ld (hl),$00
+$003a 23            inc hl
+$003b c1            pop bc
+$003c 10 ef         djnz $002d
+$003e cd 81 02      call $0281
+$0041 21 00 00      ld hl,$0000
+$0044 22 ee 02      ld ($02ee),hl
+$0047 21 04 03      ld hl,$0304
+$004a cd 89 02      call $0289
+$004d cd 15 e0      call $e015
+$0050 28 08         jr z,$005a
+$0052 fe 1b         cp $1b
+$0054 28 aa         jr z,$0000
+$0056 fe 03         cp $03
+$0058 28 3e         jr z,$0098
+$005a dd 21 04 03   ld ix,$0304
+$005e 21 84 0a      ld hl,$0a84
+$0061 cd 99 00      call $0099
+$0064 21 84 0a      ld hl,$0a84
+$0067 cd 89 02      call $0289
+$006a cd 15 e0      call $e015
+$006d 28 08         jr z,$0077
+$006f fe 1b         cp $1b
+$0071 28 8d         jr z,$0000
+$0073 fe 03         cp $03
+$0075 28 21         jr z,$0098
+$0077 dd 21 84 0a   ld ix,$0a84
+$007b 21 04 03      ld hl,$0304
+$007e cd 99 00      call $0099
+$0081 2a ee 02      ld hl,($02ee)
+$0084 11 80 00      ld de,$0080
+$0087 b7            or a
+$0088 ed 52         sbc hl,de
+$008a da 47 00      jp c,$0047
+$008d cd a5 02      call $02a5
+$0090 fe 01         cp $01
+$0092 da 00 00      jp c,$0000
+$0095 c3 47 00      jp $0047
+$0098 c9            ret
+$0099 dd e5         push ix
+$009b d1            pop de
+$009c ed 53 f0 02   ld ($02f0),de
+$00a0 22 f2 02      ld ($02f2),hl
+$00a3 2a f2 02      ld hl,($02f2)
+$00a6 cd 81 02      call $0281
+$00a9 2a f0 02      ld hl,($02f0)
+$00ac 11 00 07      ld de,$0700
+$00af 19            add hl,de
+$00b0 22 f4 02      ld ($02f4),hl
+$00b3 2a f0 02      ld hl,($02f0)
+$00b6 11 40 00      ld de,$0040
+$00b9 19            add hl,de
+$00ba 22 f6 02      ld ($02f6),hl
+$00bd 2a f0 02      ld hl,($02f0)
+$00c0 11 80 00      ld de,$0080
+$00c3 19            add hl,de
+$00c4 22 f8 02      ld ($02f8),hl
+$00c7 2a f2 02      ld hl,($02f2)
+$00ca 11 40 00      ld de,$0040
+$00cd 19            add hl,de
+$00ce 22 fa 02      ld ($02fa),hl
+$00d1 cd 44 01      call $0144
+$00d4 06 1a         ld b,$1a
+$00d6 cd 1b 01      call $011b
+$00d9 cd 44 01      call $0144
+$00dc 10 f8         djnz $00d6
+$00de 2a f0 02      ld hl,($02f0)
+$00e1 11 c0 06      ld de,$06c0
+$00e4 19            add hl,de
+$00e5 22 f4 02      ld ($02f4),hl
+$00e8 2a f0 02      ld hl,($02f0)
+$00eb 11 00 07      ld de,$0700
+$00ee 19            add hl,de
+$00ef 22 f6 02      ld ($02f6),hl
+$00f2 2a f0 02      ld hl,($02f0)
+$00f5 11 40 00      ld de,$0040
+$00f8 19            add hl,de
+$00f9 22 f8 02      ld ($02f8),hl
+$00fc 2a f2 02      ld hl,($02f2)
+$00ff 11 00 07      ld de,$0700
+$0102 19            add hl,de
+$0103 22 fa 02      ld ($02fa),hl
+$0106 cd 44 01      call $0144
+$0109 2a f2 02      ld hl,($02f2)
+$010c 11 40 07      ld de,$0740
+$010f 19            add hl,de
+$0110 cd 81 02      call $0281
+$0113 2a ee 02      ld hl,($02ee)
+$0116 23            inc hl
+$0117 22 ee 02      ld ($02ee),hl
+$011a c9            ret
+$011b 2a f4 02      ld hl,($02f4)
+$011e 11 40 00      ld de,$0040
+$0121 19            add hl,de
+$0122 22 f4 02      ld ($02f4),hl
+$0125 2a f6 02      ld hl,($02f6)
+$0128 11 40 00      ld de,$0040
+$012b 19            add hl,de
+$012c 22 f6 02      ld ($02f6),hl
+$012f 2a f8 02      ld hl,($02f8)
+$0132 11 40 00      ld de,$0040
+$0135 19            add hl,de
+$0136 22 f8 02      ld ($02f8),hl
+$0139 2a fa 02      ld hl,($02fa)
+$013c 11 40 00      ld de,$0040
+$013f 19            add hl,de
+$0140 22 fa 02      ld ($02fa),hl
+$0143 c9            ret
+$0144 2a fa 02      ld hl,($02fa)
+$0147 36 00         ld (hl),$00
+$0149 cd 88 01      call $0188
+$014c 2a f4 02      ld hl,($02f4)
+$014f 11 01 00      ld de,$0001
+$0152 19            add hl,de
+$0153 22 fc 02      ld ($02fc),hl
+$0156 2a f6 02      ld hl,($02f6)
+$0159 11 01 00      ld de,$0001
+$015c 19            add hl,de
+$015d 22 fe 02      ld ($02fe),hl
+$0160 2a f8 02      ld hl,($02f8)
+$0163 11 01 00      ld de,$0001
+$0166 19            add hl,de
+$0167 22 00 03      ld ($0300),hl
+$016a 2a fa 02      ld hl,($02fa)
+$016d 11 02 00      ld de,$0002
+$0170 19            add hl,de
+$0171 22 02 03      ld ($0302),hl
+$0174 06 3c         ld b,$3c
+$0176 cd db 01      call $01db
+$0179 10 fb         djnz $0176
+$017b cd 1b 02      call $021b
+$017e 2a fa 02      ld hl,($02fa)
+$0181 11 3f 00      ld de,$003f
+$0184 19            add hl,de
+$0185 36 00         ld (hl),$00
+$0187 c9            ret
+$0188 af            xor a
+$0189 2a f4 02      ld hl,($02f4)
+$018c 11 3e 00      ld de,$003e
+$018f 19            add hl,de
+$0190 86            add a,(hl)
+$0191 2a f4 02      ld hl,($02f4)
+$0194 11 01 00      ld de,$0001
+$0197 19            add hl,de
+$0198 86            add a,(hl)
+$0199 2a f4 02      ld hl,($02f4)
+$019c 11 02 00      ld de,$0002
+$019f 19            add hl,de
+$01a0 86            add a,(hl)
+$01a1 2a f6 02      ld hl,($02f6)
+$01a4 11 3e 00      ld de,$003e
+$01a7 19            add hl,de
+$01a8 86            add a,(hl)
+$01a9 2a f6 02      ld hl,($02f6)
+$01ac 11 02 00      ld de,$0002
+$01af 19            add hl,de
+$01b0 86            add a,(hl)
+$01b1 2a f8 02      ld hl,($02f8)
+$01b4 11 3e 00      ld de,$003e
+$01b7 19            add hl,de
+$01b8 86            add a,(hl)
+$01b9 2a f8 02      ld hl,($02f8)
+$01bc 11 01 00      ld de,$0001
+$01bf 19            add hl,de
+$01c0 86            add a,(hl)
+$01c1 2a f8 02      ld hl,($02f8)
+$01c4 11 02 00      ld de,$0002
+$01c7 19            add hl,de
+$01c8 86            add a,(hl)
+$01c9 2a f6 02      ld hl,($02f6)
+$01cc 11 01 00      ld de,$0001
+$01cf 19            add hl,de
+$01d0 56            ld d,(hl)
+$01d1 2a fa 02      ld hl,($02fa)
+$01d4 11 01 00      ld de,$0001
+$01d7 19            add hl,de
+$01d8 c3 6e 02      jp $026e
+$01db af            xor a
+$01dc 2a fc 02      ld hl,($02fc)
+$01df 86            add a,(hl)
+$01e0 23            inc hl
+$01e1 86            add a,(hl)
+$01e2 23            inc hl
+$01e3 86            add a,(hl)
+$01e4 2a fe 02      ld hl,($02fe)
+$01e7 86            add a,(hl)
+$01e8 23            inc hl
+$01e9 23            inc hl
+$01ea 86            add a,(hl)
+$01eb 2a 00 03      ld hl,($0300)
+$01ee 86            add a,(hl)
+$01ef 23            inc hl
+$01f0 86            add a,(hl)
+$01f1 23            inc hl
+$01f2 86            add a,(hl)
+$01f3 2a fe 02      ld hl,($02fe)
+$01f6 23            inc hl
+$01f7 56            ld d,(hl)
+$01f8 2a 02 03      ld hl,($0302)
+$01fb cd 6e 02      call $026e
+$01fe 2a fc 02      ld hl,($02fc)
+$0201 23            inc hl
+$0202 22 fc 02      ld ($02fc),hl
+$0205 2a fe 02      ld hl,($02fe)
+$0208 23            inc hl
+$0209 22 fe 02      ld ($02fe),hl
+$020c 2a 00 03      ld hl,($0300)
+$020f 23            inc hl
+$0210 22 00 03      ld ($0300),hl
+$0213 2a 02 03      ld hl,($0302)
+$0216 23            inc hl
+$0217 22 02 03      ld ($0302),hl
+$021a c9            ret
+$021b af            xor a
+$021c 2a f4 02      ld hl,($02f4)
+$021f 11 3d 00      ld de,$003d
+$0222 19            add hl,de
+$0223 86            add a,(hl)
+$0224 2a f4 02      ld hl,($02f4)
+$0227 11 3e 00      ld de,$003e
+$022a 19            add hl,de
+$022b 86            add a,(hl)
+$022c 2a f4 02      ld hl,($02f4)
+$022f 11 01 00      ld de,$0001
+$0232 19            add hl,de
+$0233 86            add a,(hl)
+$0234 2a f6 02      ld hl,($02f6)
+$0237 11 3d 00      ld de,$003d
+$023a 19            add hl,de
+$023b 86            add a,(hl)
+$023c 2a f6 02      ld hl,($02f6)
+$023f 11 01 00      ld de,$0001
+$0242 19            add hl,de
+$0243 86            add a,(hl)
+$0244 2a f8 02      ld hl,($02f8)
+$0247 11 3d 00      ld de,$003d
+$024a 19            add hl,de
+$024b 86            add a,(hl)
+$024c 2a f8 02      ld hl,($02f8)
+$024f 11 3e 00      ld de,$003e
+$0252 19            add hl,de
+$0253 86            add a,(hl)
+$0254 2a f8 02      ld hl,($02f8)
+$0257 11 01 00      ld de,$0001
+$025a 19            add hl,de
+$025b 86            add a,(hl)
+$025c 2a f6 02      ld hl,($02f6)
+$025f 11 3e 00      ld de,$003e
+$0262 19            add hl,de
+$0263 56            ld d,(hl)
+$0264 2a fa 02      ld hl,($02fa)
+$0267 11 3e 00      ld de,$003e
+$026a 19            add hl,de
+$026b c3 6e 02      jp $026e
+$026e fe 03         cp $03
+$0270 28 0c         jr z,$027e
+$0272 30 04         jr nc,$0278
+$0274 fe 02         cp $02
+$0276 28 03         jr z,$027b
+$0278 36 00         ld (hl),$00
+$027a c9            ret
+$027b 7a            ld a,d
+$027c 77            ld (hl),a
+$027d c9            ret
+$027e 36 01         ld (hl),$01
+$0280 c9            ret
+$0281 06 40         ld b,$40
+$0283 36 00         ld (hl),$00
+$0285 23            inc hl
+$0286 10 fb         djnz $0283
+$0288 c9            ret
+$0289 11 80 f0      ld de,$f080
+$028c 06 1e         ld b,$1e
+$028e c5            push bc
+$028f 06 40         ld b,$40
+$0291 7e            ld a,(hl)
+$0292 a7            and a
+$0293 28 05         jr z,$029a
+$0295 3e 84         ld a,$84
+$0297 c3 9c 02      jp $029c
+$029a 3e 20         ld a,$20
+$029c 12            ld (de),a
+$029d 13            inc de
+$029e 23            inc hl
+$029f 10 f0         djnz $0291
+$02a1 c1            pop bc
+$02a2 10 ea         djnz $028e
+$02a4 c9            ret
+$02a5 e5            push hl
+$02a6 c5            push bc
+$02a7 21 ea 02      ld hl,$02ea
+$02aa 5e            ld e,(hl)
+$02ab 23            inc hl
+$02ac 56            ld d,(hl)
+$02ad 23            inc hl
+$02ae 4e            ld c,(hl)
+$02af 23            inc hl
+$02b0 7e            ld a,(hl)
+$02b1 47            ld b,a
+$02b2 cb 13         rl e
+$02b4 cb 12         rl d
+$02b6 cb 11         rl c
+$02b8 17            rla
+$02b9 cb 13         rl e
+$02bb cb 12         rl d
+$02bd cb 11         rl c
+$02bf 17            rla
+$02c0 cb 13         rl e
+$02c2 cb 12         rl d
+$02c4 cb 11         rl c
+$02c6 17            rla
+$02c7 67            ld h,a
+$02c8 cb 13         rl e
+$02ca cb 12         rl d
+$02cc cb 11         rl c
+$02ce 17            rla
+$02cf a8            xor b
+$02d0 cb 13         rl e
+$02d2 cb 12         rl d
+$02d4 ac            xor h
+$02d5 a9            xor c
+$02d6 aa            xor d
+$02d7 21 ec 02      ld hl,$02ec
+$02da 11 ed 02      ld de,$02ed
+$02dd 01 07 00      ld bc,$0007
+$02e0 ed b8         lddr
+$02e2 12            ld (de),a
+$02e3 c1            pop bc
+$02e4 e1            pop hl
+$02e5 c9            ret
 
-$026c 2b c3 84 c2 8d 5d b1 85   +√Ñ¬ç]±Ö
-$0274 00 00                     ..
+$02e6 2a c3 14 c2 8d 59 b1 88   *√.¬çY±à
+$02ee 00 00 00 00 00 00 00 00   ........
+$02f6 00 00 00 00 00 00 00 00   ........
+$02fe 00 00 00 00 00 00         ......

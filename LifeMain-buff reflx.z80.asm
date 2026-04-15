@@ -29,17 +29,6 @@
     .format  "PRG"
     .setting "OutputSaveIndividualSegments", false
 
-; Monitor Entry Points
-MONITOR_QUICKCK     .equ $E015
-MONITOR_KEYBRD      .equ $E018
-MONITOR_VIDEO       .equ $E01B
-MONITOR_SENDLINE    .equ $E1BA
-MONITOR_CRLF        .equ $E205
-MONITOR_HEXOUT_DE   .equ $E1E8
-MONITOR_HEXOUT_A    .equ $E1ED
-MONITOR_SENDBLANKS  .equ $E2D2
-
-SCREEN_BASE         .equ $F080
 
 HEIGHT_WB           .equ 30
 
@@ -377,5 +366,18 @@ LFSRSeed:       .byte       $2B,$C3,$84,$C2,$8D,$5D,$B1,$85
 nGeneration     .word       0
 board1:         .storage    WIDTH * HEIGHT_WB
 board2:         .storage    WIDTH * HEIGHT_WB
+
+;Top of Exidy screen RAM 
+SCREEN_BASE         .equ $F080
+
+; Monitor Entry Points
+MONITOR_QUICKCK     .equ $E015
+MONITOR_KEYBRD      .equ $E018
+MONITOR_VIDEO       .equ $E01B
+MONITOR_SENDLINE    .equ $E1BA
+MONITOR_CRLF        .equ $E205
+MONITOR_HEXOUT_DE   .equ $E1E8
+MONITOR_HEXOUT_A    .equ $E1ED
+MONITOR_SENDBLANKS  .equ $E2D2
 
 .end

@@ -7,23 +7,6 @@
     .format  "PRG"
     .setting "OutputSaveIndividualSegments", false
 
-; ------------------------------------------------
-; Monitor Entry Points
-; ------------------------------------------------
-MONITOR_RECEVE      .equ $E009
-MONITOR_SEND        .equ $E00C
-MONITOR_INTAPE      .equ $E00F
-MONITOR_OUTTAPE     .equ $E012
-MONITOR_QUICKCK     .equ $E015
-MONITOR_KEYBRD      .equ $E018
-MONITOR_VIDEO       .equ $E01B
-MONITOR_SENDLINE    .equ $E1BA
-MONITOR_CRLF        .equ $E205
-MONITOR_HEXOUT_DE   .equ $E1E8
-MONITOR_HEXOUT_A    .equ $E1ED
-MONITOR_SENDBLANKS  .equ $E2D2
-
-SCREEN_BASE         .equ $F080
 
 ; ------------------------------------------------
 ; Board layout
@@ -673,4 +656,15 @@ pDstPtr:        .word   0
 board1:         .storage WIDTH * HEIGHT_WB
 board2:         .storage WIDTH * HEIGHT_WB
 
+SCREEN_BASE         .equ $F080
+
+; Monitor Entry Points
+MONITOR_QUICKCK     .equ $E015
+MONITOR_KEYBRD      .equ $E018
+MONITOR_VIDEO       .equ $E01B
+MONITOR_SENDLINE    .equ $E1BA
+MONITOR_CRLF        .equ $E205
+MONITOR_HEXOUT_DE   .equ $E1E8
+MONITOR_HEXOUT_A    .equ $E1ED
+MONITOR_SENDBLANKS  .equ $E2D2
 .end
